@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>success</title>
+</head>
+<body>
+    <h1>成功！</h1>
+    <hr/>
+    <!--    转义-->
+    <div class="mydiv" id="div0"  th:text="${hello}">用户</div>
+    <!--    不转义-->
+    <div th:utext="${hello}"></div>
+
+    <hr/>
+    <h4 th:text="${user}" th:each="user:${user}" ></h4>
+    <hr/>
+</body>
+</html>

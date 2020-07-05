@@ -1,0 +1,801 @@
+<!doctype html>
+<html>
+
+<head>
+    <!doctype html>
+    <html>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>疫情进展</title>
+        <link type="text/css" href="css/public.css" rel="stylesheet">
+        <link type="text/css" href="css/index.css" rel="stylesheet">
+        <script type="text/javascript">
+            document.documentElement.style.fontSize = document.documentElement.clientWidth / 768 * 100 + 'px';
+        </script>
+        <script src="js/jquery-3.4.1.min.js"></script>
+        <!-- 引入 ECharts 文件 -->
+        <script src="js/echarts.js"></script>
+        <script src="js/china.js"></script>
+        <script src="js/world.js"></script>
+    </head>
+
+    <body>
+        <div class="bg">
+            <div class="title">疫情最新情报</div>
+            <div class="leftMain">
+                <div class="leftMain_top">
+                    <div class="leftMain_topIn">
+                    </div>
+                </div>
+                <div class="leftMain_middle">
+                    <div class="leftMain_middle_left">
+                        <div class="leftMain_middle_leftIn">
+                            <h3>中国疫情感染情况</h3>
+                            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                            <div class="biaoge" style="width:100%; height:60vh" id="chinaMap"></div>
+                            <script type="text/javascript">
+                                function ChinaMap(url, chartId, textname) {
+                                    $.ajax({ //Ajax请求你要展现的数据
+                                        url: url,
+                                        type: 'get',
+                                        cache: false,
+                                        dataType: 'json',
+                                        async: false, //改为同步
+                                        data: {}, //查看方式
+                                        success: function(data) {
+                                            chinaChartTool.registerFunnelChart(chartId, textname, data.china_data);
+                                        },
+                                        error: function() {
+                                            alert('服务器异常！')
+                                        }
+                                    });
+                                }
+
+                                var chinaChartTool = {
+                                    /**
+                                     * @todo Echarts 中国地图
+                                     * @param chartId	插件的div的ID
+                                     * @param textname  标题名
+                                     * @param seriesData 实际展现的数据
+                                     */
+                                    registerFunnelChart: function(chartId, textname, seriesData) {
+                                        var myChart = echarts.init(document.getElementById(chartId));
+                                        myChart.showLoading();
+                                        var option = {
+                                            color: ['#3398DB'],
+                                            title: {
+                                                text: textname,
+                                                //subtext: 'data from baidu',
+                                                //sublink: 'http://www.baidu.com',
+                                                left: 'center',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            visualMap: {
+                                                min: 0,
+                                                max: 1000,
+                                                text: ['High', 'Low'],
+                                                realtime: false,
+                                                calculable: true,
+                                                color: ['#FF0000', '#FFA500', '#EEEE00'],
+                                                textStyle: {
+                                                    color: '#FFF',
+                                                }
+                                            },
+                                            tooltip: {
+                                                trigger: 'item',
+                                                formatter: function(val) {
+                                                    return val.data.name + ': ' + val.data.value
+                                                }
+                                            },
+                                            nameMap: {
+                                                "吉林": "吉林省",
+                                                "上海": "上海市",
+                                                "内蒙古": "内蒙古自治区",
+                                                "湖北": "湖北省",
+                                                "北京": "北京市",
+                                                "陕西": "陕西省",
+                                                "广东": "广东省",
+                                                "辽宁": "辽宁省",
+                                                "天津": "天津市",
+                                                "山东": "山东省",
+                                                "海南": "海南省",
+                                                "河南": "河南省",
+                                                "浙江": "浙江省",
+                                                "湖南": "湖南省",
+                                                "安徽": "安徽省",
+                                                "黑龙江": "黑龙江省",
+                                                "江西": "江西省",
+                                                "江苏": "江苏省",
+                                                "重庆": "重庆市",
+                                                "四川": "四川省",
+                                                "福建": "福建省",
+                                                "河北": "河北省",
+                                                "广西": "广西壮族自治区",
+                                                "云南": "云南省",
+                                                "贵州": "贵州省",
+                                                "甘肃": "甘肃省",
+                                                "新疆": "新疆维吾尔自治区",
+                                                "宁夏": "宁夏回族自治区",
+                                                "青海": "青海省",
+                                                "西藏": "西藏自治区",
+                                                "山西": "山西省"
+                                            },
+                                            series: [{
+                                                type: 'map',
+                                                mapType: 'china',
+                                                label: {
+                                                    normal: {
+                                                        show: true, //显示省份标签
+                                                        textStyle: {
+                                                            color: "#008B8B"
+                                                        } //省份标签字体颜色
+                                                    },
+                                                    emphasis: { //对应的鼠标悬浮效果
+                                                        show: false,
+                                                        textStyle: {
+                                                            color: "#800080 "
+                                                        }
+                                                    }
+                                                },
+                                                aspectScale: 0.75,
+                                                roam: true,
+                                                zoom: 1.2,
+                                                data: seriesData
+                                            }],
+                                        };
+                                        // 使用刚指定的配置项和数据显示图表。
+                                        myChart.setOption(option);
+                                        myChart.hideLoading();
+                                        myChart.on('click', function(params) {
+                                            console.log(params.data.id);
+                                            console.log(params.data.name);
+                                            var cityLineUrl = 'http://ecctf.top:18080/history/getById/china/' + params.data.id + '/1';
+                                            CityLineMap(cityLineUrl, 'cityLineMap', params.data.name);
+                                        });
+                                        window.addEventListener("resize", function() {
+                                            myChart.resize();
+                                        });
+                                    },
+                                };
+                                var Url = "http://ecctf.top:18080/testBoot/getRegions";
+                                ChinaMap(Url, 'chinaMap', "中国");
+                            </script>
+                            <span class="border_bg_leftTop"></span>
+                            <span class="border_bg_rightTop"></span>
+                            <span class="border_bg_leftBottom"></span>
+                            <span class="border_bg_rightBottom"></span>
+                        </div>
+                    </div>
+                    <div class="leftMain_middle_right">
+                        <div class="leftMain_middle_rightIn">
+                            <h3>世界感染国家人数排名</h3>
+                            <div class="biaoge biaoge_pai" style="width:100%; height:60vh" id="rankMap">
+                                <script type="text/javascript">
+                                    function RankMap(url, chartId, textname) {
+                                        $.ajax({
+                                            url: url,
+                                            type: 'get',
+                                            cache: false,
+                                            dataType: 'json',
+                                            async: false, //改为同步
+                                            data: {}, //查看方式
+                                            success: function(data) {
+                                                rankChartTool.registerFunnelChart(chartId, textname, data.x_data, data.y_data);
+                                            },
+                                            error: function() {
+                                                alert('服务器异常！')
+                                            }
+                                        });
+                                        //chartTool.registerFunnelChart(chartId, textname, data.china_data);
+                                    }
+
+                                    var rankChartTool = {
+                                        /**
+                                         * @todo Echarts 地图
+                                         * @param chartId	插件的div的ID
+                                         * @param textname  标题名
+                                         * @param xAxisData 实际展现的数据
+                                         * @param yAxisData 国家
+                                         */
+                                        registerFunnelChart: function(chartId, textname, xAxisData, yAxisData) {
+                                            var myChart = echarts.init(document.getElementById(chartId));
+                                            myChart.showLoading();
+                                            var option = {
+                                                //color: ['#3398DB'],
+                                                title: {
+                                                    text: textname,
+                                                    left: 'center',
+                                                    textStyle: {
+                                                        color: '#fff'
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    trigger: 'axis',
+                                                    axisPointer: {
+                                                        type: 'shadow'
+                                                    }
+                                                },
+                                                grid: {
+                                                    x: 150,
+                                                    y: 40,
+                                                    x2: 50,
+                                                    y2: 20,
+                                                },
+                                                xAxis: {
+                                                    type: 'value',
+                                                    boundaryGap: [0, 0.01],
+                                                    axisLabel: {
+                                                        textStyle: {
+                                                            color: '#fff',
+                                                            fontSize: 12
+                                                        }
+                                                    }
+                                                },
+                                                yAxis: {
+                                                    type: 'category',
+                                                    data: xAxisData,
+                                                    axisLabel: {
+                                                        textStyle: {
+                                                            color: '#fff',
+                                                            fontSize: 12
+                                                        }
+                                                    }
+                                                },
+                                                dataZoom: [{
+                                                    type: 'slider',
+                                                    startValue: 10,
+                                                    orient: "vertical",
+                                                }],
+                                                series: [{
+                                                    barWidth: 30,
+                                                    type: 'bar',
+                                                    itemStyle: {
+                                                        normal: {　　　　　　　　
+                                                            color: function(params) {
+                                                                var colorList = ['#FAF0E6', '#2f4554', '#61a0a8', '#d48265', '#91c7ae', '#749f83', '#ca8622', "#FF69B4", "#00FFFF", "#c23531"];
+                                                                var index;
+                                                                //给大于颜色数量的柱体添加循环颜色的判断
+                                                                if (params.dataIndex >= colorList.length) {
+                                                                    index = params.dataIndex - colorList.length;
+                                                                    return colorList[index];
+                                                                }
+                                                                return colorList[params.dataIndex];
+                                                            }
+                                                        }
+                                                    },
+                                                    data: yAxisData
+                                                }]
+                                            };
+                                            // 使用刚指定的配置项和数据显示图表。
+                                            myChart.setOption(option);
+                                            myChart.hideLoading();
+                                            window.addEventListener("resize", function() {
+                                                myChart.resize();
+                                            });
+                                        },
+                                    };
+                                    var rankUrl = "http://ecctf.top:18080/testBoot/getRank/world/20";
+                                    RankMap(rankUrl, 'rankMap', "Rank");
+                                </script>
+                            </div>
+                            <span class="border_bg_leftTop"></span>
+                            <span class="border_bg_rightTop"></span>
+                            <span class="border_bg_leftBottom"></span>
+                            <span class="border_bg_rightBottom"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="leftMain_middle">
+                    <div class="leftMain_middle_left">
+                        <div class="leftMain_middle_leftIn">
+                            <h3>各省感染人数变化</h3>
+                            <div class="biaoge" style="width:100%; height:30vh" id="cityLineMap"></div>
+                            <script type="text/javascript">
+                                function CityLineMap(url, chartId, textname) {
+                                    $.ajax({ //Ajax请求你要展现的数据
+                                        url: url,
+                                        type: 'get',
+                                        cache: false,
+                                        dataType: 'json',
+                                        async: false, //改为同步
+                                        data: {}, //查看方式
+                                        success: function(data) {
+                                            cityLineChartTool.registerFunnelChart(chartId, textname, data.city_data);
+                                        },
+                                        error: function() {
+                                            alert('服务器异常！')
+                                        }
+                                    });
+                                    //chartTool.registerFunnelChart(chartId, textname, data.china_data);
+                                }
+
+                                var cityLineChartTool = {
+                                    /**
+                                     * @todo Echarts 折线图
+                                     * @param chartId	插件的div的ID
+                                     * @param textname  标题名
+                                     * @param Data 数据
+                                     */
+                                    registerFunnelChart: function(chartId, textname, Data) {
+                                        var myChart = echarts.init(document.getElementById(chartId));
+                                        myChart.showLoading();
+                                        var option = {
+                                            title: {
+                                                text: textname,
+                                                left: 'center',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            tooltip: {
+                                                trigger: 'axis'
+                                            },
+                                            grid: {
+                                                x: 50,
+                                                y: 40,
+                                                x2: 40,
+                                                y2: 20,
+                                            },
+                                            xAxis: {
+                                                type: 'time',
+                                                name: "日期",
+                                                boundaryGap: false,
+                                                axisLabel: {
+                                                    interval: 0,
+                                                    textStyle: {
+                                                        color: '#fff',
+                                                        fontSize: 12
+
+                                                    }
+                                                },
+                                                axisTick: {
+                                                    show: false,
+                                                },
+                                                axisLine: {
+                                                    show: true,
+                                                    symbol: ['none', 'arrow'],
+                                                    symbolOffset: 12,
+                                                    lineStyle: {
+                                                        color: '#fff',
+                                                    }
+                                                },
+                                            },
+                                            yAxis: {
+                                                type: 'value',
+                                                name: "人数",
+                                                axisLine: {
+                                                    show: true,
+                                                    symbol: ['none', 'arrow'],
+                                                    symbolOffset: 12,
+                                                    lineStyle: {
+                                                        color: '#fff',
+                                                    }
+                                                },
+                                                axisTick: {
+                                                    show: false
+                                                },
+                                                axisLabel: {
+                                                    textStyle: {
+                                                        color: '#fff',
+                                                        fontSize: 12
+                                                    }
+                                                },
+                                                max: function(value) {
+                                                    return parseInt(value.max + value.max * 0.1);
+                                                }
+                                            },
+                                            dataZoom: [{
+                                                type: 'inside',
+                                                //start: 10,
+                                                //end: 15,
+                                                //startValue: 10,
+                                                //maxValueSpan: 10,
+                                            }],
+                                            series: [{
+                                                type: 'line',
+                                                data: Data,
+                                                itemStyle: {
+                                                    normal: {
+                                                        color: "#0efdff", //折线点的颜色
+                                                        lineStyle: {
+                                                            color: "#0efdff", //折线的颜色
+                                                            width: 2,
+                                                        }
+                                                    },
+                                                }
+                                            }]
+                                        };
+                                        // 使用刚指定的配置项和数据显示图表。
+                                        myChart.setOption(option);
+                                        myChart.hideLoading();
+                                        window.addEventListener("resize", function() {
+                                            myChart.resize();
+                                        });
+                                    },
+                                };
+                                var cityUrl = "http://ecctf.top:18080/history/getById/china/7/1";
+                                CityLineMap(cityUrl, 'cityLineMap', "北京");
+                            </script>
+                            <span class="border_bg_leftTop"></span>
+                            <span class="border_bg_rightTop"></span>
+                            <span class="border_bg_leftBottom"></span>
+                            <span class="border_bg_rightBottom"></span>
+                        </div>
+                    </div>
+                    <div class="leftMain_middle_right">
+                        <div class="leftMain_middle_rightIn">
+                            <h3>疫情最新情况</h3>
+                            <div class="biaoge biaoge_bi" style="width:100%; height:30vh">
+                                <ul>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu1" id="cnTo"></p>
+                                            <p class="zi">中国累计感染人数</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu2" id="cnIn"></p>
+                                            <p class="zi">中国昨日增长人数</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu3" id="cnNow"></p>
+                                            <p class="zi">中国当前感染人数</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu4" id="wdTo"></p>
+                                            <p class="zi">世界累计感染人数</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu5" id="wdIn"></p>
+                                            <p class="zi">世界昨日增长人数</p>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="liIn">
+                                            <p class="shu shu6" id="wdNow"></p>
+                                            <p class="zi">世界当前感染人数</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <script type="text/javascript">
+                                    function setPeople(url) {
+                                        $.ajax({ //Ajax请求你要展现的数据
+                                            url: url,
+                                            type: 'get',
+                                            cache: false,
+                                            dataType: 'json',
+                                            async: false, //改为同步
+                                            data: {}, //查看方式
+                                            success: function(data) {
+                                                $("#cnTo").append(data.cn_total);
+                                                $("#cnIn").append(data.cn_growth);
+                                                $("#cnNow").append(data.cn_today);
+                                                $("#wdTo").append(data.wd_total);
+                                                $("#wdIn").append(data.wd_growth);
+                                                $("#wdNow").append(data.wd_today);
+                                            },
+                                            error: function() {
+                                                alert('服务器异常！')
+                                            }
+                                        });
+                                        //chartTool.registerFunnelChart(chartId, textname, data.china_data);
+                                    }
+                                    var peopleUrl = "http://ecctf.top:18080/history/getDashBoard";
+                                    setPeople(peopleUrl);
+                                </script>
+                            </div>
+                            <span class="border_bg_leftTop"></span>
+                            <span class="border_bg_rightTop"></span>
+                            <span class="border_bg_leftBottom"></span>
+                            <span class="border_bg_rightBottom"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rightMain">
+                <div class="rightMain_top">
+                    <div class="rightMain_topIn">
+                        <h3>世界疫情感染情况</h3>
+                        <div style="width:100%; height:80vh" id="worldMap">
+                            <script type="text/javascript">
+                                function WorldMap(url, chartId, textname) {
+                                    $.ajax({ //Ajax请求你要展现的数据
+                                        url: url,
+                                        type: 'get',
+                                        cache: false,
+                                        dataType: 'json',
+                                        async: false, //改为同步
+                                        data: {}, //查看方式
+                                        success: function(data) {
+                                            worldChartTool.registerFunnelChart(chartId, textname, data.world_data);
+                                        },
+                                        error: function() {
+                                            alert('服务器异常！')
+                                        }
+                                    });
+                                }
+
+                                var worldChartTool = {
+                                    /**
+                                     * @todo Echarts 世界地图
+                                     * @param chartId	插件的div的ID
+                                     * @param textname  标题名
+                                     * @param seriesData 实际展现的数据
+                                     */
+                                    registerFunnelChart: function(chartId, textname, seriesData) {
+                                        var myChart = echarts.init(document.getElementById(chartId));
+                                        myChart.showLoading();
+                                        var option = {
+                                            //color: ['#3398DB'],
+                                            title: {
+                                                text: textname,
+                                                //subtext: 'data from baidu',
+                                                //sublink: 'http://www.baidu.com',
+                                                left: 'center',
+                                                textStyle: {
+                                                    color: '#fff'
+                                                }
+                                            },
+                                            visualMap: {
+                                                min: 0,
+                                                max: 150000,
+                                                text: ['High', 'Low'],
+                                                realtime: false,
+                                                calculable: true,
+                                                color: ['#FF0000', '#FFA500', '#EEEE00'],
+                                                textStyle: {
+                                                    color: '#FFF',
+                                                },
+                                            },
+                                            tooltip: {
+                                                trigger: 'item',
+                                                formatter: function(val) {
+                                                    return val.data.name + ': ' + val.data.value
+                                                }
+                                            },
+                                            nameMap: {
+                                                "Haiti": "The Republic of Haiti",
+                                                "United Kingdom": "The United Kingdom",
+                                                "United States": "United States of America",
+                                                "Dominican Rep.": "Dominican Republic",
+                                                "Trinidad and Tobago": "Trinidad & Tobago",
+                                                "El Salvador": "The Republic of El Salvador",
+                                                "Bolivia": "Bolivia (Plurinational State of)",
+                                                "Falkland Is.": "Falkland Islands",
+                                                "Cabo Verde Rep.": "Cabo Verde",
+                                                "Côte d'Ivoire": "Cote d Ivoire",
+                                                "Eq. Guinea": "Eq.Guinea",
+                                                "Central African Rep.": "Central African Republic",
+                                                "S. Sudan": "South Sudan",
+                                                "Dem. Rep. São Tomé and Príncipe": "São Tomé and Príncipe",
+                                                "Zambia": "The Republic of Zambia",
+                                                "Dem. Rep. Congo": "Democratic Republic of the Congo",
+                                                "Burundi": "The Republic of Burundi",
+                                                "Djibouti": "The Republic of Djibouti",
+                                                "Yemen": "The Republic of Yemen",
+                                                "Macedonia": "North Macedonia",
+                                                "Czech Rep.": "Czechia",
+                                                "Moldova": "Republic of Moldova",
+                                                "Syrian": "Syrian ArabRepublic",
+                                                "Iran": "Iran (Islamic Republic of)",
+                                                "Russia": "Russian Federation",
+                                                "Lao PDR": "Laos",
+                                                "Dem. Rep. Korea": "Republic of Korea",
+                                                "Bosnia and Herz.": "Bosnia and Herzegovina",
+                                            },
+                                            series: [{
+                                                type: 'map',
+                                                mapType: 'world',
+                                                label: {
+                                                    normal: {
+                                                        show: false, //显示省份标签
+                                                        textStyle: {
+                                                            color: "blue "
+                                                        } //省份标签字体颜色
+                                                    },
+                                                    emphasis: { //对应的鼠标悬浮效果
+                                                        show: false,
+                                                        textStyle: {
+                                                            color: "#800080 "
+                                                        }
+                                                    }
+                                                },
+                                                aspectScale: 0.75,
+                                                zoom: 1.2,
+                                                roam: false,
+                                                data: seriesData
+                                            }],
+                                        };
+                                        // 使用刚指定的配置项和数据显示图表。
+                                        myChart.setOption(option);
+                                        myChart.hideLoading();
+                                        myChart.on('click', function(params) {
+                                            console.log(params.data.id);
+                                            console.log(params.data.name);
+                                            var countryLineUrl = 'http://ecctf.top:18080/history/getById/world/' + params.data.id + '/1';
+                                            CountryLineMap(countryLineUrl, 'countryLineMap', params.data.name);
+                                        });
+                                        window.addEventListener("resize", function() {
+                                            myChart.resize();
+                                        });
+                                    },
+                                };
+                                //var url = "http://ecctf.top:18080/testBoot/getRegions";
+                                WorldMap(Url, 'worldMap', "世界");
+                            </script>
+                        </div>
+                        <span class="border_bg_leftTop"></span>
+                        <span class="border_bg_rightTop"></span>
+                        <span class="border_bg_leftBottom"></span>
+                        <span class="border_bg_rightBottom"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="rightMain">
+                <div class="rightMain_top">
+                    <div class="rightMain_topIn">
+                        <h3>各国感染人数变化</h3>
+                        <div class="biaoge" style="width:100%; height:30vh" id="countryLineMap"></div>
+                        <script type="text/javascript">
+                            function CountryLineMap(url, chartId, textname) {
+                                $.ajax({ //Ajax请求你要展现的数据
+                                    url: url,
+                                    type: 'get',
+                                    cache: false,
+                                    dataType: 'json',
+                                    async: false, //改为同步
+                                    data: {}, //查看方式
+                                    success: function(data) {
+                                        countryLineChartTool.registerFunnelChart(chartId, textname, data.country_data);
+                                    },
+                                    error: function() {
+                                        alert('服务器异常！')
+                                    }
+                                });
+                                //chartTool.registerFunnelChart(chartId, textname, data.china_data);
+                            }
+
+                            var countryLineChartTool = {
+                                /**
+                                 * @todo Echarts 折线图
+                                 * @param chartId	插件的div的ID
+                                 * @param textname  标题名
+                                 * @param Data 数据
+                                 */
+                                registerFunnelChart: function(chartId, textname, Data) {
+                                    var myChart = echarts.init(document.getElementById(chartId));
+                                    myChart.showLoading();
+                                    var option = {
+                                        title: {
+                                            text: textname,
+                                            left: 'center',
+                                            textStyle: {
+                                                color: '#fff'
+                                            }
+                                        },
+                                        tooltip: {
+                                            trigger: 'axis'
+                                        },
+                                        grid: {
+                                            x: 65,
+                                            y: 40,
+                                            x2: 40,
+                                            y2: 20,
+                                        },
+                                        xAxis: {
+                                            type: 'time',
+                                            name: "date",
+                                            boundaryGap: false,
+                                            axisLabel: {
+                                                interval: 0,
+                                                textStyle: {
+                                                    color: '#fff',
+                                                    fontSize: 12
+
+                                                }
+                                            },
+                                            axisTick: {
+                                                show: false,
+                                            },
+                                            axisLine: {
+                                                show: true,
+                                                symbol: ['none', 'arrow'],
+                                                symbolOffset: 12,
+                                                lineStyle: {
+                                                    color: '#fff',
+                                                }
+                                            },
+                                        },
+                                        yAxis: {
+                                            type: 'value',
+                                            axisLine: {
+                                                show: true,
+                                                symbol: ['none', 'arrow'],
+                                                symbolOffset: 12,
+                                                lineStyle: {
+                                                    color: '#fff',
+                                                }
+                                            },
+                                            axisTick: {
+                                                show: false
+                                            },
+                                            axisLabel: {
+                                                textStyle: {
+                                                    color: '#fff',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                            min: function(value) {
+                                                return parseInt(value.min - value.min * 0.1);
+                                            },
+                                            max: function(value) {
+                                                return parseInt(value.max + value.max * 0.1);
+                                            }
+                                        },
+                                        dataZoom: [{
+                                            type: 'inside',
+                                            //startValue: 5,
+                                        }],
+                                        series: [{
+                                            type: 'line',
+                                            data: Data,
+                                            itemStyle: {
+                                                normal: {
+                                                    color: "#0efdff", //折线点的颜色
+                                                    lineStyle: {
+                                                        color: "#0efdff", //折线的颜色
+                                                        width: 2,
+                                                    }
+                                                },
+                                            }
+                                        }]
+                                    };
+                                    // 使用刚指定的配置项和数据显示图表。
+                                    myChart.setOption(option);
+                                    myChart.hideLoading();
+                                    window.addEventListener("resize", function() {
+                                        myChart.resize();
+                                    });
+                                },
+                            };
+                            var countryUrl = "http://ecctf.top:18080/history/getById/world/1/1";
+                            CountryLineMap(countryUrl, 'countryLineMap', "USA");
+                        </script>
+                        <span class="border_bg_leftTop"></span>
+                        <span class="border_bg_rightTop"></span>
+                        <span class="border_bg_leftBottom"></span>
+                        <span class="border_bg_rightBottom"></span>
+                    </div>
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <!--数字增长累加动画-->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.numscroll.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+            $(".shu1").numScroll();
+            $(".shu2").numScroll();
+            $(".shu3").numScroll();
+            $(".shu4").numScroll();
+            $(".shu5").numScroll();
+            $(".shu6").numScroll();
+        </script>
+
+    </body>
+
+    </html>

@@ -1,0 +1,28 @@
+#for test
+server:
+  port: 8081
+
+  spring:
+    datasource:
+      username: root
+      password:
+      url: jdbc:mysql://127.0.0.1:3306/ncov?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      #thymeleaf start
+    thymeleaf:
+      mode: HTML
+      encoding: UTF-8
+      prefix: classpath:/templates/
+      content-type: text/html
+      #开发时关闭缓存,不然没法看到实时页面
+      suffix: .html
+      cache: false
+  mybatis:
+    mapper-locations: classpath:mapping/*Mapper.xml
+    type-aliases-package: com.zjut.azhen.ncov.bean
+
+  #showSql
+  logging:
+    level:
+      com.zjut.azhen.ncov:
+        mapping: debug
