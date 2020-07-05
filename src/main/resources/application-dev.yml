@@ -8,7 +8,7 @@ spring:
   datasource:
     username: root
     password: root
-    url: jdbc:mysql://127.0.0.1/DBDesign?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1/zhengjiaye02mis?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
     #thymeleaf start
   thymeleaf:
@@ -46,10 +46,10 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapping/*Mapper.xml
-  type-aliases-package: com.zjut.azhen.ncov.bean
+  type-aliases-package: com.zjut.azhen.DBDesign.bean
 
 #showSql
 logging:
   level:
-    com.zjut.azhen.ncov:
+    com.zjut.azhen.DBDesign:
       mapping : debug

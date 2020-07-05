@@ -1,4 +1,4 @@
-package com.zjut.azhen.DBDesign.config;
+package com.zjut.azhen.DBDesign.config.aspect;
 
 
 import org.aspectj.lang.annotation.Aspect;
@@ -11,6 +11,6 @@ public class DevAspect {
     @Pointcut("execution(public * com.zjut.azhen.DBDesign.controllers.*(..)))")
     public void brokerAspect(){}
 
-    
+
 
 }

@@ -18,6 +18,8 @@ public class Course {
 
     private String cTest;
 
+    private String clName;
+
     public String getCno() {
         return cno;
     }

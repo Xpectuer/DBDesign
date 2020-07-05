@@ -20,4 +20,4 @@
 #mybatis config
 spring:
   profiles:
-    active: dev
+    active: prod
